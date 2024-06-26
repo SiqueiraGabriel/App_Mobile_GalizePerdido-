@@ -5,8 +5,7 @@ import { StyleSheet, Text, View, Button, TouchableOpacity, Alert } from 'react-n
 import { SafeAreaView } from 'react-native-safe-area-context';
 import CustomButton from '../../components/CustomButton';
 import CameraPreview from '../../components/CameraPreview';
-//import { sendImage, supabase } from './lib/supabaseClient.js';
-
+import { sendImage, supabase } from './supabaseClient.js';
 
 
 export default function camera() {
@@ -61,13 +60,16 @@ export default function camera() {
     const response = await fetch(uri)
     const blob = await response.blob()
     const arrayBuffer = await new Response(blob).arrayBuffer()
-    const fileName = `public/Picture_${Date.now()}.jpg`
+    const fileName = `Picture_${Date.now()}.jpg`
     console.log("Iniciando envio para o bd")
-    //sendImage(uri, fileName, arrayBuffer)
+    sendImage(uri, fileName, arrayBuffer)
     Alert.alert("Captura de Imagem", "Imagem salva com sucesso!")
 
   }
 
+  // ---------------------------------->> LOCALIZATION 
+  
+  
   return (
     <View className="bg-primary flex h-full align-bottom justify-between">
       {previewVisible && capturedImage ? (
