@@ -12,11 +12,17 @@ import {requestForegroundPermissionsAsync, getCurrentPosition, getCurrentPositio
 import Geocoder from "react-native-geocoding"
 
 const CameraPreview = ({photo}) => {
+    console.log("O nome da ffoto é ", photo)
 
     const diasSemana = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sab"]
 
     const [data, setData] = useState(null)
+    const [linkImage, setLinkImage] = useState(null)
     
+
+    useEffect(() => {
+        requestLocationPermission();
+      }, []);
     
     if(data == null){
         let d = getHora()
@@ -52,6 +58,8 @@ const CameraPreview = ({photo}) => {
 
     //request permission
     const  requestLocationPermission = async () => {
+        console.log(linkImage)
+
         try {
             const { status } = await requestForegroundPermissionsAsync();
             if (status === 'granted') {
@@ -73,7 +81,7 @@ const CameraPreview = ({photo}) => {
                         state: address[4].long_name
                     })  
                 })
-
+                console.log(address)
                 console.log('Location permission granted');
                 return true
             } else {
@@ -88,13 +96,14 @@ const CameraPreview = ({photo}) => {
 
     const [tipoAnimal, setTipoAnimal] = useState()
 
-  console.log("Entrando no camera preview")
-    
+
+
   return (
+
     <SafeAreaView>
         <View className="bg-primary justify-center items-center">
             <Image 
-                source={{uri:"https://th.bing.com/th/id/OIP.BD-axKm2_LAjwrhrwg-JoAHaE8?rs=1&pid=ImgDetMain"}}
+                source={{uri: photo}}
                 className="h-[450px] w-[450px] mt-2"
                 resizeMode='contain'
             />
@@ -102,15 +111,15 @@ const CameraPreview = ({photo}) => {
                 <Text className="text-white font-psemibold text-center" >Rua Luiz Fernando Hastreiter 180, {'\n'}São Bento do Sul, SC, {'\n'}89283-081</Text>
             </View>
             
-            <View className="bg-secondary-100 w-full mt-2 items-center p-5">
+            <View className="bg-secondary-100 w-full mt-2 items-center p-5 mb-2">
                 <Text className="text-white font-psemibold text-center" >{data}</Text>
             </View>
-            <View>
+            <View className="mt-2">
             <CustomButton 
              handlePress={requestLocationPermission}
-             title="Tirar Fotografia"
-             styledComponent="mb-3 ml-2 mr-2 mt-auto"
-         />
+             title="Salvar Informações"
+             styledComponent="mb-3 ml-2 mt-3 mr-2 mt-auto"
+            />
                 
             </View>
             
