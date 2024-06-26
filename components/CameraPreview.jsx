@@ -8,14 +8,14 @@ import CustomButton from '../components/CustomButton';
 
 // Localização
 import Geolocation from 'react-native-geolocation-service'
-import {requestForegroundPermissionsAsync, getCurrentPosition} from 'expo-location';
+import {requestForegroundPermissionsAsync, getCurrentPosition, getCurrentPositionAsync} from 'expo-location';
+import Geocoder from "react-native-geocoding"
 
 const CameraPreview = ({photo}) => {
 
     const diasSemana = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sab"]
 
     const [data, setData] = useState(null)
-    
     
     
     if(data == null){
@@ -47,16 +47,43 @@ const CameraPreview = ({photo}) => {
 
     // ------------------------------- LOCATION
     const [location, setLocation] = useState(false)
+    const [address, setAddress] = useState(false)
     
 
     //request permission
-    const requestLocationPermission = async () => {
+    const  requestLocationPermission = async () => {
         try {
             const { status } = await requestForegroundPermissionsAsync();
             if (status === 'granted') {
-              console.log('Location permission granted');
-              return true
-              // You can now access the user's location
+
+                // Obter a localização em coordenadas 
+                const locationActual = await getCurrentPositionAsync()
+                setLocation({
+                    "latitude": locationActual.coords.latitude,
+                    "longitude": locationActual.coords.longitude
+                });
+                Geocoder.init("AIzaSyAzde8vEAAns0Kia7RCtiAXaX8pv-_5fUE")
+                // Obter o endereço
+
+                let lat =  location.latitude
+                let long =  location.longitude
+
+                // Obter o endereço 
+                Geocoder.from(lat, long)
+                .then(json => {
+                    const address = json.results[0];
+
+                    
+                    console.log('Address:', address.long_name);
+                    setAddress({
+                        "street": address.address_components[0]
+                    })
+                })
+
+                console.log('Location permission granted');
+                console.log(location)
+
+                return true
             } else {
               console.log('Location permission denied');
               return false
@@ -67,11 +94,7 @@ const CameraPreview = ({photo}) => {
         }
     }
 
-    function getLocation () {
-        const result = requestLocationPermission();
-        console.log(Geolocation.getCurrentPosition())
-        //console.log("Ola", location);
-      };
+    
 
 
 
@@ -100,7 +123,7 @@ const CameraPreview = ({photo}) => {
             </View>
             <View>
             <CustomButton 
-             handlePress={getLocation}
+             handlePress={requestLocationPermission}
              title="Tirar Fotografia"
              styledComponent="mb-3 ml-2 mr-2 mt-auto"
          />
