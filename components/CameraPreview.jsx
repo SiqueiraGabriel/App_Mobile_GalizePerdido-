@@ -58,31 +58,23 @@ const CameraPreview = ({photo}) => {
 
                 // Obter a localização em coordenadas 
                 const locationActual = await getCurrentPositionAsync()
-                setLocation({
-                    "latitude": locationActual.coords.latitude,
-                    "longitude": locationActual.coords.longitude
-                });
-                Geocoder.init("AIzaSyAzde8vEAAns0Kia7RCtiAXaX8pv-_5fUE")
+                let lat =  locationActual.coords.latitude
+                let long =  locationActual.coords.longitude
+
                 // Obter o endereço
-
-                let lat =  location.latitude
-                let long =  location.longitude
-
-                // Obter o endereço 
+                Geocoder.init("AIzaSyAzde8vEAAns0Kia7RCtiAXaX8pv-_5fUE")
                 Geocoder.from(lat, long)
                 .then(json => {
-                    const address = json.results[0];
-
-                    
-                    console.log('Address:', address.long_name);
+                    const address = json.results[0].address_components;
                     setAddress({
-                        "street": address.address_components[0]
-                    })
+                        street: `${address[1].long_name} - ${address[0].long_name}`,
+                        neighborhood: address[2].long_name,
+                        city: address[3].long_name,
+                        state: address[4].long_name
+                    })  
                 })
 
                 console.log('Location permission granted');
-                console.log(location)
-
                 return true
             } else {
               console.log('Location permission denied');
@@ -93,14 +85,6 @@ const CameraPreview = ({photo}) => {
             return false
         }
     }
-
-    
-
-
-
-  // ---------------------------------->>
-
-    
 
     const [tipoAnimal, setTipoAnimal] = useState()
 
